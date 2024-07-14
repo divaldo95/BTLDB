@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ var mysqlConnectionString = builder.Configuration.GetConnectionString("MySQLDBCo
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseMySql(mysqlConnectionString, new MySqlServerVersion(new Version(8, 0, 25))));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+/*
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -40,6 +42,8 @@ builder.Services.AddIdentityServer()
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
+
+*/
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -65,13 +69,21 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+// Enable forwarded headers
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+/*
 app.UseAuthentication();
 app.UseIdentityServer();
 app.UseAuthorization();
+*/
 
 app.MapControllerRoute(
     name: "default",

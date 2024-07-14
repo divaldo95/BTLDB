@@ -8,6 +8,7 @@ function Home() {
     const [file, setFile] = useState(null);
 
     const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [dataLoaded, setDataLoaded] = useState(false);
     const [queryErrorMessage, setQueryErrorMessage] = useState("");
 
@@ -25,6 +26,7 @@ function Home() {
 
     const handleBarcodeSubmit = async () => {
         try {
+            setIsLoading(true);
             const response = await axios.get('BTLDB/' + barcode + '/');
             console.log(response.data);
             setData(response.data);
@@ -34,6 +36,7 @@ function Home() {
             setDataLoaded(false);
             setQueryErrorMessage(error.message);
         }
+        setIsLoading(false);
     };
 
     const handleFileSubmit = async () => {
@@ -133,7 +136,14 @@ function Home() {
                     </FloatingLabel>
                 </Col>
                 <Col xs="auto">
-                    <Button variant="primary" onClick={handleBarcodeSubmit} className="mb-3">
+                    <Button disabled={isLoading} variant="primary" onClick={handleBarcodeSubmit} className="mb-3">
+                        {isLoading ? <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        /> : ''}
                         Submit Barcode
                     </Button>
                 </Col>
